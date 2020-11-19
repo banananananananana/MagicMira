@@ -1,1 +1,5 @@
+#aula images
 python3 aula.py | jq -r '.data.posts[] | .attachments[] | .media.file.url ' | while read line; do curl -JO "$line"; done
+
+#screen rotate pi4
+DISPLAY=:0 xrandr --output HDMI-1 --rotate left
