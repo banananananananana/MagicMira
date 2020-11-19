@@ -2,8 +2,10 @@
 python3 aula.py | jq -r '.data.posts[] | .attachments[] | .media.file.url ' | while read line; do curl -JO "$line"; done
 
 #screen rotate pi4
+/etc/xdg/lxsession/LXDE-pi/autostart
 DISPLAY=:0 xrandr --output HDMI-1 --rotate left
 
 #hide mouse cursor
 sudo apt-get install unclutter^
 unclutter -display :0  -idle 0 &
+
