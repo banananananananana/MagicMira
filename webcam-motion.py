@@ -8,13 +8,10 @@ from PIL import Image
 camera = picamera.PiCamera()
 
 difference = 20
-pixels = 100
-
-width = 1280
-height = 960
+pixels = 50000
 
 def compare():
-        camera.resolution = (100, 75)
+        camera.resolution = (640, 480)
         stream = io.BytesIO()
         camera.capture(stream, format = 'bmp')
         stream.seek(0)
@@ -30,17 +27,23 @@ while (True):
         image2, buffer2 = compare()
 
         changedpixels = 0
-        for x in xrange(0, 100):
-                for y in xrange(0, 75):
+        for x in xrange(0, 640):
+                for y in xrange(0, 480):
                         pixdiff = abs(buffer1[x,y][1]- buffer2[x,y][1])
                         if pixdiff > difference:
                                 changedpixels += 1
         if changedpixels > pixels:
                 print 'motion detected, turning on screen'
-                os.system('echo 0 > /sys/class/backlight/rpi_backlight/bl_power')
+                os.system('/usr/bin/vcgencmd display_power 1')
+                camera.resolution = (640, 480)
+                camera.rotation = 180
+                camera.capture('foo.jpg')
+                os.system('gpicview foo.jpg &')
+                time.sleep(5)
+                os.system('pkill -f "gpicview"')
                 time.sleep(10)
         if pixels > changedpixels:
                 print 'no motion, turning off screen'
-                os.system('echo 1 > /sys/class/backlight/rpi_backlight/bl_power')
+                os.system('/usr/bin/vcgencmd display_power 0')
         image1 = image2
         buffer1 = buffer2
