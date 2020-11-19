@@ -1,0 +1,1 @@
+python3 aula.py | jq -r '.data.posts[] | .attachments[] | .media.file.url ' | while read line; do curl -JO "$line"; done
